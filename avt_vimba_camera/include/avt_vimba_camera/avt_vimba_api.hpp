@@ -153,76 +153,50 @@ public:
 
     VmbUint32_t step = nSize / height;
 
-    // NOTE: YUV and ARGB formats not supported
+    // NOTE: YUV formats not tested
+    const std::unordered_map<VmbPixelFormatType, std::string> pixel_format_map = {
+      {VmbPixelFormatMono8,         sensor_msgs::image_encodings::MONO8},
+      {VmbPixelFormatMono10,        sensor_msgs::image_encodings::MONO16},
+      {VmbPixelFormatMono12,        sensor_msgs::image_encodings::MONO16},
+      {VmbPixelFormatMono12Packed,  sensor_msgs::image_encodings::MONO16},
+      {VmbPixelFormatMono14,        sensor_msgs::image_encodings::MONO16},
+      {VmbPixelFormatMono16,        sensor_msgs::image_encodings::MONO16},
+      {VmbPixelFormatBayerGR8,      sensor_msgs::image_encodings::BAYER_GRBG8},
+      {VmbPixelFormatBayerRG8,      sensor_msgs::image_encodings::BAYER_RGGB8},
+      {VmbPixelFormatBayerGB8,      sensor_msgs::image_encodings::BAYER_GBRG8},
+      {VmbPixelFormatBayerBG8,      sensor_msgs::image_encodings::BAYER_BGGR8},
+      {VmbPixelFormatBayerGR10,     sensor_msgs::image_encodings::TYPE_16SC1},
+      {VmbPixelFormatBayerRG10,     sensor_msgs::image_encodings::TYPE_16SC1},
+      {VmbPixelFormatBayerGB10,     sensor_msgs::image_encodings::TYPE_16SC1},
+      {VmbPixelFormatBayerBG10,     sensor_msgs::image_encodings::TYPE_16SC1},
+      {VmbPixelFormatBayerGR12,     sensor_msgs::image_encodings::TYPE_16SC1},
+      {VmbPixelFormatBayerRG12,     sensor_msgs::image_encodings::TYPE_16SC1},
+      {VmbPixelFormatBayerGB12,     sensor_msgs::image_encodings::TYPE_16SC1},
+      {VmbPixelFormatBayerBG12,     sensor_msgs::image_encodings::TYPE_16SC1},
+      {VmbPixelFormatBayerGR12Packed, sensor_msgs::image_encodings::TYPE_32SC4},
+      {VmbPixelFormatBayerRG12Packed, sensor_msgs::image_encodings::TYPE_32SC4},
+      {VmbPixelFormatBayerGB12Packed, sensor_msgs::image_encodings::TYPE_32SC4},
+      {VmbPixelFormatBayerBG12Packed, sensor_msgs::image_encodings::TYPE_32SC4},
+      {VmbPixelFormatBayerGR16,     sensor_msgs::image_encodings::BAYER_GRBG16},
+      {VmbPixelFormatBayerRG16,     sensor_msgs::image_encodings::BAYER_RGGB16},
+      {VmbPixelFormatBayerGB16,     sensor_msgs::image_encodings::BAYER_GBRG16},
+      {VmbPixelFormatBayerBG16,     sensor_msgs::image_encodings::BAYER_BGGR16},
+      {VmbPixelFormatRgb8,          sensor_msgs::image_encodings::RGB8},
+      {VmbPixelFormatBgr8,          sensor_msgs::image_encodings::BGR8},
+      {VmbPixelFormatRgba8,         sensor_msgs::image_encodings::RGBA8},
+      {VmbPixelFormatBgra8,         sensor_msgs::image_encodings::BGRA8},
+      {VmbPixelFormatRgb12,         sensor_msgs::image_encodings::TYPE_16UC3},
+      {VmbPixelFormatRgb16,         sensor_msgs::image_encodings::TYPE_16UC3},
+      {VmbPixelFormatYuv422,        sensor_msgs::image_encodings::YUV422},
+      {VmbPixelFormatYuv444,        sensor_msgs::image_encodings::NV24},
+    };
     std::string encoding;
-    if (pixel_format == VmbPixelFormatMono8)
-      encoding = sensor_msgs::image_encodings::MONO8;
-    else if (pixel_format == VmbPixelFormatMono10)
-      encoding = sensor_msgs::image_encodings::MONO16;
-    else if (pixel_format == VmbPixelFormatMono12)
-      encoding = sensor_msgs::image_encodings::MONO16;
-    else if (pixel_format == VmbPixelFormatMono12Packed)
-      encoding = sensor_msgs::image_encodings::MONO16;
-    else if (pixel_format == VmbPixelFormatMono14)
-      encoding = sensor_msgs::image_encodings::MONO16;
-    else if (pixel_format == VmbPixelFormatMono16)
-      encoding = sensor_msgs::image_encodings::MONO16;
-    else if (pixel_format == VmbPixelFormatBayerGR8)
-      encoding = sensor_msgs::image_encodings::BAYER_GRBG8;
-    else if (pixel_format == VmbPixelFormatBayerRG8)
-      encoding = sensor_msgs::image_encodings::BAYER_RGGB8;
-    else if (pixel_format == VmbPixelFormatBayerGB8)
-      encoding = sensor_msgs::image_encodings::BAYER_GBRG8;
-    else if (pixel_format == VmbPixelFormatBayerBG8)
-      encoding = sensor_msgs::image_encodings::BAYER_BGGR8;
-    else if (pixel_format == VmbPixelFormatBayerGR10)
-      encoding = sensor_msgs::image_encodings::TYPE_16SC1;
-    else if (pixel_format == VmbPixelFormatBayerRG10)
-      encoding = sensor_msgs::image_encodings::TYPE_16SC1;
-    else if (pixel_format == VmbPixelFormatBayerGB10)
-      encoding = sensor_msgs::image_encodings::TYPE_16SC1;
-    else if (pixel_format == VmbPixelFormatBayerBG10)
-      encoding = sensor_msgs::image_encodings::TYPE_16SC1;
-    else if (pixel_format == VmbPixelFormatBayerGR12)
-      encoding = sensor_msgs::image_encodings::TYPE_16SC1;
-    else if (pixel_format == VmbPixelFormatBayerRG12)
-      encoding = sensor_msgs::image_encodings::TYPE_16SC1;
-    else if (pixel_format == VmbPixelFormatBayerGB12)
-      encoding = sensor_msgs::image_encodings::TYPE_16SC1;
-    else if (pixel_format == VmbPixelFormatBayerBG12)
-      encoding = sensor_msgs::image_encodings::TYPE_16SC1;
-    else if (pixel_format == VmbPixelFormatBayerGR12Packed)
-      encoding = sensor_msgs::image_encodings::TYPE_32SC4;
-    else if (pixel_format == VmbPixelFormatBayerRG12Packed)
-      encoding = sensor_msgs::image_encodings::TYPE_32SC4;
-    else if (pixel_format == VmbPixelFormatBayerGB12Packed)
-      encoding = sensor_msgs::image_encodings::TYPE_32SC4;
-    else if (pixel_format == VmbPixelFormatBayerBG12Packed)
-      encoding = sensor_msgs::image_encodings::TYPE_32SC4;
-    else if (pixel_format == VmbPixelFormatBayerGR16)
-      encoding = sensor_msgs::image_encodings::TYPE_16SC1;
-    else if (pixel_format == VmbPixelFormatBayerRG16)
-      encoding = sensor_msgs::image_encodings::TYPE_16SC1;
-    else if (pixel_format == VmbPixelFormatBayerGB16)
-      encoding = sensor_msgs::image_encodings::TYPE_16SC1;
-    else if (pixel_format == VmbPixelFormatBayerBG16)
-      encoding = sensor_msgs::image_encodings::TYPE_16SC1;
-    else if (pixel_format == VmbPixelFormatRgb8)
-      encoding = sensor_msgs::image_encodings::RGB8;
-    else if (pixel_format == VmbPixelFormatBgr8)
-      encoding = sensor_msgs::image_encodings::BGR8;
-    else if (pixel_format == VmbPixelFormatRgba8)
-      encoding = sensor_msgs::image_encodings::RGBA8;
-    else if (pixel_format == VmbPixelFormatBgra8)
-      encoding = sensor_msgs::image_encodings::BGRA8;
-    else if (pixel_format == VmbPixelFormatRgb12)
-      encoding = sensor_msgs::image_encodings::TYPE_16UC3;
-    else if (pixel_format == VmbPixelFormatRgb16)
-      encoding = sensor_msgs::image_encodings::TYPE_16UC3;
-    else
+    try {
+      encoding = pixel_format_map.at(pixel_format);
+    } catch (const std::out_of_range& e) {
       RCLCPP_WARN(logger_, "Received frame with unsupported pixel format %d", pixel_format);
-    if (encoding == "")
       return false;
+    }
 
     VmbUchar_t* buffer_ptr;
     VmbErrorType err = vimba_frame_ptr->GetImage(buffer_ptr);
