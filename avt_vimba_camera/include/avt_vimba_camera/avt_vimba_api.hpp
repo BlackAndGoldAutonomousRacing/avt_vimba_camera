@@ -153,7 +153,8 @@ public:
 
     VmbUint32_t step = nSize / height;
 
-    // NOTE: YUV formats not tested
+    // NOTE: YUV formats not tested.
+    // YUV444 format not enabled yet for pre-humble compatibility.
     const std::unordered_map<VmbPixelFormatType, std::string> pixel_format_map = {
       {VmbPixelFormatMono8,         sensor_msgs::image_encodings::MONO8},
       {VmbPixelFormatMono10,        sensor_msgs::image_encodings::MONO16},
@@ -188,7 +189,7 @@ public:
       {VmbPixelFormatRgb12,         sensor_msgs::image_encodings::TYPE_16UC3},
       {VmbPixelFormatRgb16,         sensor_msgs::image_encodings::TYPE_16UC3},
       {VmbPixelFormatYuv422,        sensor_msgs::image_encodings::YUV422},
-      {VmbPixelFormatYuv444,        sensor_msgs::image_encodings::NV24},
+      //{VmbPixelFormatYuv444,        sensor_msgs::image_encodings::NV24},
     };
     std::string encoding;
     try {
