@@ -67,7 +67,6 @@ private:
   std::string frame_id_;
   bool use_measurement_time_;
   int32_t ptp_offset_;
-  std::string settings_file_;
 
   image_transport::CameraPublisher camera_info_pub_;
   std::shared_ptr<camera_info_manager::CameraInfoManager> info_man_;

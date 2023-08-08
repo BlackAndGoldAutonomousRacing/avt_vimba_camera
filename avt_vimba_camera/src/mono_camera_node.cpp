@@ -72,16 +72,6 @@ void MonoCameraNode::loadParams()
   use_measurement_time_ = this->declare_parameter("use_measurement_time", false);
   ptp_offset_ = this->declare_parameter("ptp_offset", 0);
 
-  settings_file_ = this->declare_parameter("init_settings_file", "");
-  auto extension = settings_file_.substr(settings_file_.find_last_of(".") + 1);
-  if (settings_file_!= "") {
-    if (extension != "xml") {
-      RCLCPP_WARN(this->get_logger(), "Invalid file extension. Only .xml is supported.");
-    } else {
-      cam_.loadCameraSettings(settings_file_);
-    }
-  }
-
   RCLCPP_INFO(this->get_logger(), "Parameters loaded");
 }
 
@@ -103,7 +93,7 @@ void MonoCameraNode::frameCallback(const FramePtr& vimba_frame_ptr)
   // if (camera_info_pub_.getNumSubscribers() > 0)
   {
     auto img = std::make_unique<sensor_msgs::msg::Image>();
-    if (api_.frameToImage(vimba_frame_ptr, *img))
+    if (api_.frameToImage(vimba_frame_ptr, *(img.get())))
     {
       auto ci = std::make_unique<sensor_msgs::msg::CameraInfo>(cam_.getCameraInfo());
       // Note: getCameraInfo() doesn't fill in header frame_id or stamp
