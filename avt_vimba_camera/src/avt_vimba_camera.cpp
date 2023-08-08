@@ -1021,6 +1021,7 @@ bool AvtVimbaCamera::loadCameraSettings(const std::string& filename)
   auto err = vimba_camera_ptr_->LoadCameraSettings(filename);
 
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  updateCameraInfo();
   startImaging();
 
   if (err != VmbErrorSuccess)

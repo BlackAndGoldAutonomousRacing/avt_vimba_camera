@@ -72,6 +72,16 @@ void MonoCameraNode::loadParams()
   use_measurement_time_ = this->declare_parameter("use_measurement_time", false);
   ptp_offset_ = this->declare_parameter("ptp_offset", 0);
 
+  settings_file_ = this->declare_parameter("init_settings_file", "");
+  auto extension = settings_file_.substr(settings_file_.find_last_of(".") + 1);
+  if (settings_file_!= "") {
+    if (extension != "xml") {
+      RCLCPP_WARN(this->get_logger(), "Invalid file extension. Only .xml is supported.");
+    } else {
+      cam_.loadCameraSettings(settings_file_);
+    }
+  }
+
   RCLCPP_INFO(this->get_logger(), "Parameters loaded");
 }
 
@@ -92,25 +102,25 @@ void MonoCameraNode::frameCallback(const FramePtr& vimba_frame_ptr)
   // getNumSubscribers() is not yet supported in Foxy, will be supported in later versions
   // if (camera_info_pub_.getNumSubscribers() > 0)
   {
-    sensor_msgs::msg::Image img;
-    if (api_.frameToImage(vimba_frame_ptr, img))
+    auto img = std::make_unique<sensor_msgs::msg::Image>();
+    if (api_.frameToImage(vimba_frame_ptr, *img))
     {
-      sensor_msgs::msg::CameraInfo ci = cam_.getCameraInfo();
+      auto ci = std::make_unique<sensor_msgs::msg::CameraInfo>(cam_.getCameraInfo());
       // Note: getCameraInfo() doesn't fill in header frame_id or stamp
-      ci.header.frame_id = frame_id_;
+      ci->header.frame_id = frame_id_;
       if (use_measurement_time_)
       {
         VmbUint64_t frame_timestamp;
         vimba_frame_ptr->GetTimestamp(frame_timestamp);
-        ci.header.stamp = rclcpp::Time(cam_.getTimestampRealTime(frame_timestamp)) + rclcpp::Duration(ptp_offset_, 0);
+        ci->header.stamp = rclcpp::Time(cam_.getTimestampRealTime(frame_timestamp)) + rclcpp::Duration(ptp_offset_, 0);
       }
       else
       {
-        ci.header.stamp = ros_time;
+        ci->header.stamp = ros_time;
       }
-      img.header.frame_id = ci.header.frame_id;
-      img.header.stamp = ci.header.stamp;
-      camera_info_pub_.publish(img, ci);
+      img->header.frame_id = ci->header.frame_id;
+      img->header.stamp = ci->header.stamp;
+      camera_info_pub_.publish(std::move(img), std::move(ci));
     }
     else
     {
