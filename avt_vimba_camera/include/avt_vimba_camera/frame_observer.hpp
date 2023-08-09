@@ -33,11 +33,11 @@
 #ifndef FRAME_OBSERVER_H
 #define FRAME_OBSERVER_H
 
-#include <VimbaCPP/Include/VimbaCPP.h>
+#include <VmbCPP/VmbCPP.h>
 
 #include <functional>
 
-using namespace AVT::VmbAPI;
+using namespace VmbCPP;
 
 class FrameObserver : virtual public IFrameObserver
 {

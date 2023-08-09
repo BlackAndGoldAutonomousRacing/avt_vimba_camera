@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(avt_vimba_camera)
 
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -29,18 +29,15 @@ include_directories(
 function(add_dependencies_and_linkings arg)
   if("${ARCH}" STREQUAL x86_64)
     target_link_libraries(${arg}
-      ${CMAKE_CURRENT_SOURCE_DIR}/lib/64bit/libVimbaC.so
-      ${CMAKE_CURRENT_SOURCE_DIR}/lib/64bit/libVimbaCPP.so
+      ${CMAKE_CURRENT_SOURCE_DIR}/lib/64bit/libVmbC.so
+      ${CMAKE_CURRENT_SOURCE_DIR}/lib/64bit/libVmbCPP.so
+      ${CMAKE_CURRENT_SOURCE_DIR}/lib/64bit/libVmbImageTransform.so
     )
-  elseif("${ARCH}" STREQUAL armv7)
+  elseif("${ARCH}" STREQUAL armv8 || "${ARCH}" STREQUAL aarch64)
     target_link_libraries(${arg}
-      ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_32bit/libVimbaC.so
-      ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_32bit/libVimbaCPP.so
-    )
-  elseif("${ARCH}" STREQUAL armv8)
-    target_link_libraries(${arg}
-      ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_64bit/libVimbaC.so
-      ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_64bit/libVimbaCPP.so
+      ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_64bit/libVmbC.so
+      ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_64bit/libVmbCPP.so
+      ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_64bit/libVmbImageTransform.so
     )
   else()
     message(FATAL_ERROR "[libvimba]: Architecture ${ARCH} not suported. Exiting...")
@@ -75,20 +72,16 @@ ament_auto_add_executable(trigger_exec
 
 if("${ARCH}" STREQUAL x86_64)
   install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/64bit/libVimbaC.so
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/64bit/libVimbaCPP.so
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/64bit/libVmbC.so
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/64bit/libVmbCPP.so
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/64bit/libVmbImageTransform.so
     DESTINATION lib
   )
-elseif("${ARCH}" STREQUAL armv7)
+elseif("${ARCH}" STREQUAL armv8 || "${ARCH}" STREQUAL aarch64)
   install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_32bit/libVimbaC.so
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_32bit/libVimbaCPP.so
-    DESTINATION lib
-  )
-elseif("${ARCH}" STREQUAL armv8)
-  install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_64bit/libVimbaC.so
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_64bit/libVimbaCPP.so
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_64bit/libVmbC.so
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_64bit/libVmbCPP.so
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_64bit/libVmbImageTransform.so
     DESTINATION lib
   )
 endif()

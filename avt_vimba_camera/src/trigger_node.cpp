@@ -2,7 +2,7 @@
 
 namespace trigger
 {
-TriggerNode::TriggerNode() : Node("trigger"), vimba_system_(AVT::VmbAPI::VimbaSystem::GetInstance())
+TriggerNode::TriggerNode() : Node("trigger"), vimba_system_(VimbaSystem::GetInstance())
 {
   clock_ = rclcpp::Clock(RCL_ROS_TIME);
 
@@ -76,7 +76,7 @@ bool TriggerNode::SetIntFeatureValue(const std::string& name, int64_t value)
 {
   VmbErrorType return_value = VmbErrorSuccess;
 
-  AVT::VmbAPI::FeaturePtr feature_ptr;
+  FeaturePtr feature_ptr;
   return_value = vimba_system_.GetFeatureByName(name.c_str(), feature_ptr);
 
   if (return_value != VmbErrorSuccess)
@@ -113,7 +113,7 @@ void TriggerNode::SendActionCommand()
 
   VmbErrorType return_value = VmbErrorSuccess;
 
-  AVT::VmbAPI::FeaturePtr lFeature;
+  FeaturePtr lFeature;
   return_value = vimba_system_.GetFeatureByName("ActionCommand", lFeature);
 
   if (return_value == VmbErrorSuccess)

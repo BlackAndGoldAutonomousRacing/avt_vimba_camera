@@ -1,13 +1,17 @@
 #ifndef AVT_VIMBA_CAMERA_TRIGGER_H
 #define AVT_VIMBA_CAMERA_TRIGGER_H
 
-#include <VimbaCPP/Include/VimbaCPP.h>
+#include <VmbCPP/VmbCPP.h>
 
 #include <arpa/inet.h>
 
 #include <rclcpp/rclcpp.hpp>
 
 #include <std_msgs/msg/bool.hpp>
+
+using VimbaSystem = VmbCPP::VmbSystem;
+using VmbCPP::InterfacePtr;
+using VmbCPP::FeaturePtr;
 
 namespace trigger
 {
@@ -29,8 +33,8 @@ private:
   void TriggerCb(const std_msgs::msg::Bool::SharedPtr msg);
   void SendActionCommand();
 
-  AVT::VmbAPI::VimbaSystem& vimba_system_;
-  AVT::VmbAPI::InterfacePtr interface_ptr_;
+  VimbaSystem& vimba_system_;
+  InterfacePtr interface_ptr_;
   rclcpp::Clock clock_;
   rclcpp::TimerBase::SharedPtr trigger_timer_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr trigger_sub_;

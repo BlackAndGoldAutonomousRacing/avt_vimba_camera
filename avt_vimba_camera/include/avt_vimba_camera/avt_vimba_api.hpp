@@ -33,7 +33,8 @@
 #ifndef AVT_VIMBA_API_H
 #define AVT_VIMBA_API_H
 
-#include <VimbaCPP/Include/VimbaCPP.h>
+#include <VmbCPP/VmbCPP.h>
+#include <VmbImageTransform/VmbTransform.h>
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
@@ -43,9 +44,10 @@
 #include <string>
 #include <map>
 
-using AVT::VmbAPI::CameraPtr;
-using AVT::VmbAPI::FramePtr;
-using AVT::VmbAPI::VimbaSystem;
+using VmbCPP::CameraPtr;
+using VmbCPP::FramePtr;
+using VimbaSystem = VmbCPP::VmbSystem;
+using VmbInterfaceType = VmbTransportLayerType;
 
 namespace avt_vimba_camera
 {
@@ -111,14 +113,20 @@ public:
   {
     switch (interfaceType)
     {
-      case VmbInterfaceFirewire:
+      // case VmbInterfaceFirewire:
+      case VmbTransportLayerTypeIIDC:
         return "FireWire";
         break;
-      case VmbInterfaceEthernet:
+      // case VmbInterfaceEthernet:
+      case VmbTransportLayerTypeGEV:
         return "GigE";
         break;
-      case VmbInterfaceUsb:
+      // case VmbInterfaceUsb:
+      case VmbTransportLayerTypeUVC:
         return "USB";
+        break;
+      case VmbTransportLayerTypeU3V:
+        return "USB3";
         break;
       default:
         return "Unknown";
@@ -131,9 +139,9 @@ public:
       return "Read and write access";
     else if (modeType & VmbAccessModeRead)
       return "Only read access";
-    else if (modeType & VmbAccessModeConfig)
+    else if (modeType & VmbAccessModeUnknown)
       return "Device configuration access";
-    else if (modeType & VmbAccessModeLite)
+    else if (modeType & VmbAccessModeExclusive)
       return "Device read/write access without feature access (only addresses)";
     else if (modeType & VmbAccessModeNone)
       return "No access";
@@ -144,14 +152,10 @@ public:
   bool frameToImage(const FramePtr vimba_frame_ptr, sensor_msgs::msg::Image& image)
   {
     VmbPixelFormatType pixel_format;
-    VmbUint32_t width, height, nSize;
-
+    vimba_frame_ptr->GetPixelFormat(pixel_format);
+    VmbUint32_t width, height;
     vimba_frame_ptr->GetWidth(width);
     vimba_frame_ptr->GetHeight(height);
-    vimba_frame_ptr->GetPixelFormat(pixel_format);
-    vimba_frame_ptr->GetImageSize(nSize);
-
-    VmbUint32_t step = nSize / height;
 
     // NOTE: YUV formats not tested.
     // YUV444 format not enabled yet for pre-humble compatibility.
@@ -199,11 +203,23 @@ public:
       return false;
     }
 
-    VmbUchar_t* buffer_ptr;
+    VmbUint8_t* buffer_ptr;
     VmbErrorType err = vimba_frame_ptr->GetImage(buffer_ptr);
+
+    VmbImage vmb_img;
+    vmb_img.Size = sizeof(vmb_img);
+    vmb_img.Data = buffer_ptr;
+    VmbError_t err2 = VmbSetImageInfoFromPixelFormat(pixel_format, width, height, &vmb_img);
+    if (err2 != VmbErrorSuccess) {
+      RCLCPP_ERROR_STREAM(logger_, "VmbSetImageInfoFromPixelFormat: error "
+                                      << errorCodeToMessage(static_cast<VmbErrorType>(err2)));
+      return false;
+    }
+
     bool res = false;
     if (VmbErrorSuccess == err)
     {
+      VmbUint32_t step = vmb_img.ImageInfo.Stride * (vmb_img.ImageInfo.PixelInfo.BitsPerPixel / 8);
       res = sensor_msgs::fillImage(image, encoding, height, width, step, buffer_ptr);
     }
     else

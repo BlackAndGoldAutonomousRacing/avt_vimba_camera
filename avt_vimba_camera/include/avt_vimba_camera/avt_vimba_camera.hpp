@@ -33,7 +33,7 @@
 #ifndef AVT_VIMBA_CAMERA_H
 #define AVT_VIMBA_CAMERA_H
 
-#include <VimbaCPP/Include/VimbaCPP.h>
+#include <VmbCPP/VmbCPP.h>
 
 #include "avt_vimba_camera/frame_observer.hpp"
 #include "avt_vimba_camera/avt_vimba_api.hpp"
@@ -46,10 +46,13 @@
 #include <string>
 #include <mutex>
 
-using AVT::VmbAPI::CameraPtr;
-using AVT::VmbAPI::FramePtr;
-using AVT::VmbAPI::IFrameObserverPtr;
-using AVT::VmbAPI::VimbaSystem;
+using VmbCPP::CameraPtr;
+using VmbCPP::FramePtr;
+using VmbCPP::IFrameObserver;
+using VmbCPP::IFrameObserverPtr;
+using VimbaSystem = VmbCPP::VmbSystem;
+using VmbCPP::FeaturePtr;
+using VmbCPP::SharedPointer;
 
 namespace avt_vimba_camera
 {
@@ -118,7 +121,7 @@ private:
   AvtVimbaApi api_;
 
   // IFrame Observer
-  SP_DECL(FrameObserver) frame_obs_ptr_;
+  SharedPointer<IFrameObserver> frame_obs_ptr_;
   // The currently streaming camera
   CameraPtr vimba_camera_ptr_;
   // Current frame
