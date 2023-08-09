@@ -581,7 +581,10 @@ void AvtVimbaCamera::configureFeature(const std::string& feature_str, const Vimb
   VmbErrorType return_value = setFeatureValue(feature_str, val_in);
   if (return_value == VmbErrorSuccess || return_value == VmbErrorInvalidValue)
   {
-    getFeatureValue(feature_str, actual_value);
+    if (!getFeatureValue(feature_str, actual_value)){
+      RCLCPP_INFO_STREAM(nh_->get_logger(), " - Failed to get " << feature_str << " feature value");
+      return;
+    }
     if (val_in == actual_value)
     {
       RCLCPP_INFO_STREAM(nh_->get_logger(), " - " << feature_str << " set to " << actual_value);
