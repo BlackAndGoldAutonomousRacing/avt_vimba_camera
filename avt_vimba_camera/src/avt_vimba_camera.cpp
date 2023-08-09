@@ -280,9 +280,9 @@ void AvtVimbaCamera::frameCallback(const FramePtr vimba_frame_ptr)
   diagnostic_msg_ = "Camera operating normally";
 
   // Call the callback implemented by other classes
-  // std::thread thread_callback = std::thread(userFrameCallback, vimba_frame_ptr);
-  // thread_callback.join();
-  userFrameCallback(vimba_frame_ptr);
+  std::thread thread_callback = std::thread(userFrameCallback, vimba_frame_ptr);
+  thread_callback.join();
+  // userFrameCallback(vimba_frame_ptr);
 }
 
 CameraState AvtVimbaCamera::getCameraState() const
