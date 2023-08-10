@@ -121,7 +121,7 @@ private:
   AvtVimbaApi api_;
 
   // IFrame Observer
-  SharedPointer<IFrameObserver> frame_obs_ptr_;
+  SharedPointer<FrameObserver> frame_obs_ptr_;
   // The currently streaming camera
   CameraPtr vimba_camera_ptr_;
   // Current frame
@@ -151,7 +151,7 @@ private:
   CameraPtr openCamera(const std::string& id_str);
 
   frameCallbackFunc userFrameCallback;
-  void frameCallback(const FramePtr vimba_frame_ptr);
+  void frameCallback(const FramePtr& vimba_frame_ptr);
 
   template <typename T>
   VmbErrorType setFeatureValue(const std::string& feature_str, const T& val);

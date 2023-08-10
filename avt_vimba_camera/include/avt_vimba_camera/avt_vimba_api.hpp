@@ -283,80 +283,80 @@ private:
   {
     RCLCPP_INFO(logger_, "Searching for cameras ...");
     CameraPtrVector cameras;
-    if (VmbErrorSuccess == vs.Startup())
+    //if (VmbErrorSuccess == vs.Startup())
+    //{
+    if (VmbErrorSuccess == vs.GetCameras(cameras))
     {
-      if (VmbErrorSuccess == vs.GetCameras(cameras))
+      for (const auto& camera : cameras)
       {
-        for (const auto& camera : cameras)
+        std::string strID;
+        std::string strName;
+        std::string strModelname;
+        std::string strSerialNumber;
+        std::string strInterfaceID;
+        VmbInterfaceType interfaceType;
+        VmbAccessModeType accessType;
+
+        VmbErrorType err = camera->GetID(strID);
+        if (VmbErrorSuccess != err)
         {
-          std::string strID;
-          std::string strName;
-          std::string strModelname;
-          std::string strSerialNumber;
-          std::string strInterfaceID;
-          VmbInterfaceType interfaceType;
-          VmbAccessModeType accessType;
-
-          VmbErrorType err = camera->GetID(strID);
-          if (VmbErrorSuccess != err)
-          {
-            RCLCPP_ERROR_STREAM(logger_, "[Could not get camera ID. Error code: " << err << "]");
-          }
-
-          err = camera->GetName(strName);
-          if (VmbErrorSuccess != err)
-          {
-            RCLCPP_ERROR_STREAM(logger_, "[Could not get camera name. Error code: " << err << "]");
-          }
-
-          err = camera->GetModel(strModelname);
-          if (VmbErrorSuccess != err)
-          {
-            RCLCPP_ERROR_STREAM(logger_, "[Could not get camera mode name. Error code: " << err << "]");
-          }
-
-          err = camera->GetSerialNumber(strSerialNumber);
-          if (VmbErrorSuccess != err)
-          {
-            RCLCPP_ERROR_STREAM(logger_, "[Could not get camera serial number. Error code: " << err << "]");
-          }
-
-          err = camera->GetInterfaceID(strInterfaceID);
-          if (VmbErrorSuccess != err)
-          {
-            RCLCPP_ERROR_STREAM(logger_, "[Could not get interface ID. Error code: " << err << "]");
-          }
-
-          err = camera->GetInterfaceType(interfaceType);
-          if (VmbErrorSuccess != err)
-          {
-            RCLCPP_ERROR_STREAM(logger_, "[Could not get interface type. Error code: " << err << "]");
-          }
-
-          err = camera->GetPermittedAccess(accessType);
-          if (VmbErrorSuccess != err)
-          {
-            RCLCPP_ERROR_STREAM(logger_, "[Could not get access type. Error code: " << err << "]");
-          }
-
-          RCLCPP_INFO_STREAM(logger_, "Found camera named " << strName << ":");
-          RCLCPP_INFO_STREAM(logger_, " - Model Name     : " << strModelname);
-          RCLCPP_INFO_STREAM(logger_, " - Camera ID      : " << strID);
-          RCLCPP_INFO_STREAM(logger_, " - Serial Number  : " << strSerialNumber);
-          RCLCPP_INFO_STREAM(logger_, " - Interface ID   : " << strInterfaceID);
-          RCLCPP_INFO_STREAM(logger_, " - Interface type : " << interfaceToString(interfaceType));
-          RCLCPP_INFO_STREAM(logger_, " - Access type    : " << accessModeToString(accessType));
+          RCLCPP_ERROR_STREAM(logger_, "[Could not get camera ID. Error code: " << err << "]");
         }
-      }
-      else
-      {
-        RCLCPP_WARN(logger_, "Could not get cameras from Vimba System");
+
+        err = camera->GetName(strName);
+        if (VmbErrorSuccess != err)
+        {
+          RCLCPP_ERROR_STREAM(logger_, "[Could not get camera name. Error code: " << err << "]");
+        }
+
+        err = camera->GetModel(strModelname);
+        if (VmbErrorSuccess != err)
+        {
+          RCLCPP_ERROR_STREAM(logger_, "[Could not get camera mode name. Error code: " << err << "]");
+        }
+
+        err = camera->GetSerialNumber(strSerialNumber);
+        if (VmbErrorSuccess != err)
+        {
+          RCLCPP_ERROR_STREAM(logger_, "[Could not get camera serial number. Error code: " << err << "]");
+        }
+
+        err = camera->GetInterfaceID(strInterfaceID);
+        if (VmbErrorSuccess != err)
+        {
+          RCLCPP_ERROR_STREAM(logger_, "[Could not get interface ID. Error code: " << err << "]");
+        }
+
+        err = camera->GetInterfaceType(interfaceType);
+        if (VmbErrorSuccess != err)
+        {
+          RCLCPP_ERROR_STREAM(logger_, "[Could not get interface type. Error code: " << err << "]");
+        }
+
+        err = camera->GetPermittedAccess(accessType);
+        if (VmbErrorSuccess != err)
+        {
+          RCLCPP_ERROR_STREAM(logger_, "[Could not get access type. Error code: " << err << "]");
+        }
+
+        RCLCPP_INFO_STREAM(logger_, "Found camera named " << strName << ":");
+        RCLCPP_INFO_STREAM(logger_, " - Model Name     : " << strModelname);
+        RCLCPP_INFO_STREAM(logger_, " - Camera ID      : " << strID);
+        RCLCPP_INFO_STREAM(logger_, " - Serial Number  : " << strSerialNumber);
+        RCLCPP_INFO_STREAM(logger_, " - Interface ID   : " << strInterfaceID);
+        RCLCPP_INFO_STREAM(logger_, " - Interface type : " << interfaceToString(interfaceType));
+        RCLCPP_INFO_STREAM(logger_, " - Access type    : " << accessModeToString(accessType));
       }
     }
     else
     {
+      RCLCPP_WARN(logger_, "Could not get cameras from Vimba System");
+    }
+    /*
+    } else {
       RCLCPP_WARN(logger_, "Could not start Vimba System");
     }
+    */
   }
 };
 }  // namespace avt_vimba_camera

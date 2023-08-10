@@ -273,16 +273,16 @@ CameraPtr AvtVimbaCamera::openCamera(const std::string& id_str)
   return camera;
 }
 
-void AvtVimbaCamera::frameCallback(const FramePtr vimba_frame_ptr)
+void AvtVimbaCamera::frameCallback(const FramePtr& vimba_frame_ptr)
 {
   std::unique_lock<std::mutex> lock(config_mutex_);
   camera_state_ = OK;
   diagnostic_msg_ = "Camera operating normally";
 
   // Call the callback implemented by other classes
-  std::thread thread_callback = std::thread(userFrameCallback, vimba_frame_ptr);
-  thread_callback.join();
-  // userFrameCallback(vimba_frame_ptr);
+  // std::thread thread_callback = std::thread(userFrameCallback, vimba_frame_ptr);
+  // thread_callback.join();
+  userFrameCallback(vimba_frame_ptr);
 }
 
 CameraState AvtVimbaCamera::getCameraState() const
