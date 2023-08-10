@@ -162,7 +162,7 @@ void AvtVimbaCamera::startImaging()
   if (!streaming_)
   {
     // Start streaming
-    VmbErrorType err = vimba_camera_ptr_->StartContinuousImageAcquisition(3, frame_obs_ptr_);
+    VmbErrorType err = vimba_camera_ptr_->StartContinuousImageAcquisition(3, IFrameObserverPtr(frame_obs_ptr_));
     if (err == VmbErrorSuccess)
     {
       diagnostic_msg_ = "Starting continuous image acquisition";
