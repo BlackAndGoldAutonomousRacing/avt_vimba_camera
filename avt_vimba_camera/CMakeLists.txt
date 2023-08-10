@@ -33,7 +33,7 @@ function(add_dependencies_and_linkings arg)
       ${CMAKE_CURRENT_SOURCE_DIR}/lib/64bit/libVmbCPP.so
       ${CMAKE_CURRENT_SOURCE_DIR}/lib/64bit/libVmbImageTransform.so
     )
-  elseif("${ARCH}" STREQUAL armv8 || "${ARCH}" STREQUAL aarch64)
+  elseif("${ARCH}" STREQUAL armv8)
     target_link_libraries(${arg}
       ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_64bit/libVmbC.so
       ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_64bit/libVmbCPP.so
@@ -81,7 +81,7 @@ if("${ARCH}" STREQUAL x86_64)
     DESTINATION lib
     FILES_MATCHING PATTERN "*.so"
   )
-elseif("${ARCH}" STREQUAL armv8 || "${ARCH}" STREQUAL aarch64)
+elseif("${ARCH}" STREQUAL armv8)
   install(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_64bit/libVmbC.so
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/arm_64bit/libVmbCPP.so
