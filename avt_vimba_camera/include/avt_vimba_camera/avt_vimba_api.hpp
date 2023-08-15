@@ -144,14 +144,7 @@ public:
   bool frameToImage(const FramePtr vimba_frame_ptr, sensor_msgs::msg::Image& image)
   {
     VmbPixelFormatType pixel_format;
-    VmbUint32_t width, height, nSize;
-
-    vimba_frame_ptr->GetWidth(width);
-    vimba_frame_ptr->GetHeight(height);
     vimba_frame_ptr->GetPixelFormat(pixel_format);
-    vimba_frame_ptr->GetImageSize(nSize);
-
-    VmbUint32_t step = nSize / height;
 
     // NOTE: YUV formats not tested.
     // YUV444 format not enabled yet for pre-humble compatibility.
@@ -199,19 +192,22 @@ public:
       return false;
     }
 
-    VmbUchar_t* buffer_ptr;
+    // Acquire the raw image
+    VmbUchar_t* buffer_ptr = image.data.data();
     VmbErrorType err = vimba_frame_ptr->GetImage(buffer_ptr);
-    bool res = false;
-    if (VmbErrorSuccess == err)
-    {
-      res = sensor_msgs::fillImage(image, encoding, height, width, step, buffer_ptr);
-    }
-    else
-    {
+    if (VmbErrorSuccess != err) {
       RCLCPP_ERROR_STREAM(logger_, "Could not GetImage. "
                                        << "\n Error: " << errorCodeToMessage(err));
+      return false;
     }
-    return res;
+    // image is already filled. Fill in the metadata
+    vimba_frame_ptr->GetHeight(image.height);
+    vimba_frame_ptr->GetWidth(image.width);
+    VmbUint32_t nSize;
+    vimba_frame_ptr->GetImageSize(nSize);
+    image.step = nSize / image.height;
+    image.is_bigendian = 0;
+    return true;
   }
 
 private:
