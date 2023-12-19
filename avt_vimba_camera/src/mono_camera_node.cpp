@@ -92,25 +92,24 @@ void MonoCameraNode::frameCallback(const FramePtr& vimba_frame_ptr)
   // getNumSubscribers() is not yet supported in Foxy, will be supported in later versions
   // if (camera_info_pub_.getNumSubscribers() > 0)
   {
-    auto img = std::make_unique<sensor_msgs::msg::Image>();
-    if (api_.frameToImage(vimba_frame_ptr, *(img.get())))
+    if (api_.frameToImage(vimba_frame_ptr, img_msg_))
     {
-      auto ci = std::make_unique<sensor_msgs::msg::CameraInfo>(cam_.getCameraInfo());
+      cam_info_msg_ = cam_.getCameraInfo();
       // Note: getCameraInfo() doesn't fill in header frame_id or stamp
-      ci->header.frame_id = frame_id_;
+      cam_info_msg_.header.frame_id = frame_id_;
       if (use_measurement_time_)
       {
         VmbUint64_t frame_timestamp;
         vimba_frame_ptr->GetTimestamp(frame_timestamp);
-        ci->header.stamp = rclcpp::Time(cam_.getTimestampRealTime(frame_timestamp)) + rclcpp::Duration(ptp_offset_, 0);
+        cam_info_msg_.header.stamp = rclcpp::Time(cam_.getTimestampRealTime(frame_timestamp)) + rclcpp::Duration(ptp_offset_, 0);
       }
       else
       {
-        ci->header.stamp = ros_time;
+        cam_info_msg_.header.stamp = ros_time;
       }
-      img->header.frame_id = ci->header.frame_id;
-      img->header.stamp = ci->header.stamp;
-      camera_info_pub_.publish(std::move(img), std::move(ci));
+      img_msg_.header.frame_id = cam_info_msg_.header.frame_id;
+      img_msg_.header.stamp = cam_info_msg_.header.stamp;
+      camera_info_pub_.publish(img_msg_, cam_info_msg_);
     }
     else
     {

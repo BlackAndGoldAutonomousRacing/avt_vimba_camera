@@ -70,6 +70,9 @@ private:
 
   image_transport::CameraPublisher camera_info_pub_;
   std::shared_ptr<camera_info_manager::CameraInfoManager> info_man_;
+
+  sensor_msgs::msg::Image img_msg_;
+  sensor_msgs::msg::CameraInfo cam_info_msg_;
   
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr start_srv_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr stop_srv_;

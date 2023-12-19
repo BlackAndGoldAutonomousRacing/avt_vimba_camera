@@ -141,27 +141,6 @@ public:
       return "Undefined access";
   }
 
-#ifdef __GNUC__
-  // Customized raw buffer to STL vector converter without memory copy
-  class ImageData : public std::vector<uint8_t> {
-   public:
-    ImageData(uint8_t* begin, uint8_t* end){
-      _M_impl._M_start = begin;
-      _M_impl._M_finish = end;
-      _M_impl._M_end_of_storage = _M_impl._M_finish;
-    }
-
-    ~ImageData(){
-      _M_impl._M_start = nullptr;
-      _M_impl._M_finish = nullptr;
-      _M_impl._M_end_of_storage = nullptr;
-    }
-  };
-#else
-  // I wonder how Clang handles this, but we will reroute this back to default for now.
-  using ImageData = std::vector<uint8_t>;
-#endif
-
   bool frameToImage(const FramePtr vimba_frame_ptr, sensor_msgs::msg::Image& image)
   {
     VmbPixelFormatType pixel_format;
@@ -223,7 +202,7 @@ public:
     }
     VmbUint32_t nSize;
     vimba_frame_ptr->GetImageSize(nSize);
-    image.data = ImageData(buffer_ptr, buffer_ptr + nSize);
+    image.data.assign(buffer_ptr, buffer_ptr + nSize);
     // image is already filled. Fill in the metadata
     vimba_frame_ptr->GetHeight(image.height);
     vimba_frame_ptr->GetWidth(image.width);
