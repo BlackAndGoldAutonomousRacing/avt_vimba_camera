@@ -184,9 +184,8 @@ public:
       {VmbPixelFormatYuv422,        sensor_msgs::image_encodings::YUV422},
       //{VmbPixelFormatYuv444,        sensor_msgs::image_encodings::NV24},
     };
-    std::string encoding;
     try {
-      encoding = pixel_format_map.at(pixel_format);
+      image.encoding = pixel_format_map.at(pixel_format);
     } catch (const std::out_of_range& e) {
       RCLCPP_WARN(logger_, "Received frame with unsupported pixel format %d", pixel_format);
       return false;
