@@ -67,7 +67,7 @@ AvtVimbaCamera::AvtVimbaCamera(rclcpp::Node::SharedPtr owner_node)
 }
 
 void AvtVimbaCamera::start(const std::string& ip_str, const std::string& guid_str, const std::string& frame_id,
-                           const std::string& camera_info_url)
+                           const std::string& camera_info_url, VimbaSystem& vimba_system)
 {
   if (opened_)
     return;
@@ -82,7 +82,7 @@ void AvtVimbaCamera::start(const std::string& ip_str, const std::string& guid_st
   {
     diagnostic_msg_ = "Trying to open camera by IP: " + ip_str;
     RCLCPP_INFO_STREAM(nh_->get_logger(), "Trying to open camera by IP: " << ip_str);
-    vimba_camera_ptr_ = openCamera(ip_str);
+    vimba_camera_ptr_ = openCamera(ip_str, vimba_system);
     if (!vimba_camera_ptr_)
     {
       RCLCPP_WARN(nh_->get_logger(), "Camera pointer is empty. Returning...");
@@ -112,7 +112,7 @@ void AvtVimbaCamera::start(const std::string& ip_str, const std::string& guid_st
     // Only guid available
     diagnostic_msg_ = "Trying to open camera by ID: " + guid_str;
     RCLCPP_INFO_STREAM(nh_->get_logger(), "Trying to open camera by ID: " << guid_str);
-    vimba_camera_ptr_ = openCamera(guid_str);
+    vimba_camera_ptr_ = openCamera(guid_str, vimba_system);
     updater_.setHardwareID(guid_str);
     guid_ = guid_str;
   }
@@ -212,7 +212,7 @@ void AvtVimbaCamera::stopImaging()
   updater_.force_update();
 }
 
-CameraPtr AvtVimbaCamera::openCamera(const std::string& id_str)
+CameraPtr AvtVimbaCamera::openCamera(const std::string& id_str, VimbaSystem& vimba_system)
 {
   // Details:   The ID might be one of the following:
   //            "IP:169.254.12.13",
@@ -220,7 +220,6 @@ CameraPtr AvtVimbaCamera::openCamera(const std::string& id_str)
   //            or a plain serial number: "1234567890".
 
   CameraPtr camera;
-  VimbaSystem& vimba_system(VimbaSystem::GetInstance());
 
   // get camera
   VmbErrorType err = vimba_system.GetCameraByID(id_str.c_str(), camera);

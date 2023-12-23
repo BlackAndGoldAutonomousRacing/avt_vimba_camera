@@ -81,7 +81,7 @@ void MonoCameraNode::start()
   api_.start();
 
   // Start camera
-  cam_.start(ip_, guid_, frame_id_, camera_info_url_);
+  cam_.start(ip_, guid_, frame_id_, camera_info_url_, api_.getVimbaSystemInstance());
   cam_.startImaging();
 }
 

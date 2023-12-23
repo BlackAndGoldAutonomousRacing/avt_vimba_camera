@@ -39,7 +39,7 @@
 
 using namespace VmbCPP;
 
-class FrameObserver : virtual public IFrameObserver
+class FrameObserver : public IFrameObserver
 {
 public:
   typedef std::function<void(const FramePtr vimba_frame_ptr)> Callback;

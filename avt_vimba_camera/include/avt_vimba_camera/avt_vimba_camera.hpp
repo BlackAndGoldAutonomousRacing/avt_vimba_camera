@@ -77,7 +77,7 @@ public:
   // AvtVimbaCamera(rclcpp::Node* owner_node);
   AvtVimbaCamera(rclcpp::Node::SharedPtr owner_node);
   void start(const std::string& ip_str, const std::string& guid_str, const std::string& frame_id,
-             const std::string& camera_info_url);
+             const std::string& camera_info_url, VimbaSystem& vimba_system);
   void stop();
   void initConfig();
   void startImaging();
@@ -148,7 +148,7 @@ private:
   std::string diagnostic_msg_;
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_sub_;
 
-  CameraPtr openCamera(const std::string& id_str);
+  CameraPtr openCamera(const std::string& id_str, VimbaSystem& vimba_system);
 
   frameCallbackFunc userFrameCallback;
   void frameCallback(const FramePtr& vimba_frame_ptr);
